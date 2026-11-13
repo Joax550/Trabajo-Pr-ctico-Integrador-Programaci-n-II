@@ -1,2 +1,2 @@
-# Trabajo Práctico Integrador – Programación II
+# Trabajo Practico Integrador Programacion II
 
