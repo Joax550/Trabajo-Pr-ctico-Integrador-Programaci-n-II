@@ -5,14 +5,28 @@ from servicios.pedido_servicio import PedidoServicio
 from enums.rol import Rol
 from consola.menu import crear_menu
 from excepciones.food_store_exceptions import CredencialesInvalidasError
-import pwinput
+
+try:
+    import pwinput
+
+    def leer_contrasenia(prompt: str = "Contraseña: ") -> str:
+        return pwinput.pwinput(prompt=prompt, mask="*")
+except ImportError:
+    import getpass
+
+    def leer_contrasenia(prompt: str = "Contraseña: ") -> str:
+        try:
+            return getpass.getpass(prompt)
+        except Exception:
+            return input(prompt)
+
 
 def cargar_datos_iniciales(
     u_srv: UsuarioServicio,
     c_srv: CategoriaServicio,
     p_srv: ProductoServicio
 ) -> None:
-    admin = u_srv.crear_usuario(
+    u_srv.crear_usuario(
         nombre="Ana",
         apellido="Pérez",
         mail="admin@foodstore.com",
@@ -20,8 +34,8 @@ def cargar_datos_iniciales(
         contrasenia="admin123",
         rol=Rol.ADMIN
     )
-    
-    cliente = u_srv.crear_usuario(
+
+    u_srv.crear_usuario(
         nombre="Juan",
         apellido="Gómez",
         mail="juan@foodstore.com",
@@ -35,6 +49,7 @@ def cargar_datos_iniciales(
 
     p_srv.crear_producto("Pizza Muzarella", 8500.0, "Salsa de tomate, muzarella y orégano", 15, "muzza.jpg", True, cat_pizzas)
     p_srv.crear_producto("Coca-Cola 1.5L", 2500.0, "Gaseosa cola", 30, "coca.jpg", True, cat_bebidas)
+
 
 def main() -> None:
     cat_srv = CategoriaServicio()
@@ -56,10 +71,7 @@ def main() -> None:
 
         while intentos < 3:
             mail = input("Mail: ").strip()
-            try:
-                contrasenia = pwinput.pwinput(prompt="Contraseña: ", mask="*")
-            except Exception:
-                contrasenia = input("Contraseña: ")
+            contrasenia = leer_contrasenia("Contraseña: ")
 
             try:
                 usuario_logueado = usr_srv.autenticar(mail, contrasenia)
@@ -80,6 +92,7 @@ def main() -> None:
         if not cerrar_sesion:
             print("\n¡Gracias por utilizar Food Store! Hasta luego.")
             ejecutando_sistema = False
+
 
 if __name__ == "__main__":
     main()
