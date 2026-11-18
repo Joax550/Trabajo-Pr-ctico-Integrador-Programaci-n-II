@@ -13,7 +13,7 @@ Antes de ejecutar el programa por primera vez, instale la dependencia desde la t
 pip install pwinput
 ```
 
-*(Nota: Si se utiliza el bloque de respaldo en `main.py`, en caso de no tener `pwinput` instalado el sistema recurrirá automáticamente al módulo nativo `getpass`).*
+*(Nota: En caso de no tener `pwinput` instalado, el sistema recurrirá automáticamente al módulo nativo `getpass`).*
 
 ## 🏗️ Estructura del Proyecto
 
