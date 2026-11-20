@@ -121,13 +121,21 @@ class MenuAdministrador(Menu):
                             print(p)
                 elif op == 2:
                     nom = leer_texto("Nombre del producto: ")
+                    self._producto_servicio.validar_nombre_disponible(nom)
+
                     precio = leer_flotante("Precio: ")
+                    self._producto_servicio.validar_precio(precio)
+
                     desc = input("Descripción: ").strip()
+
                     stk = leer_entero("Stock inicial: ")
+                    self._producto_servicio.validar_stock(stk)
+
                     img = input("URL/Ruta imagen: ").strip()
                     disp = confirmar_accion("¿Está disponible para la venta?")
                     cat_id = leer_entero("ID de la Categoría asociada: ")
                     cat = self._categoria_servicio.buscar_por_id(cat_id)
+
                     p = self._producto_servicio.crear_producto(nom, precio, desc, stk, img, disp, cat)
                     print(f"Producto creado con éxito. ID: {p.id}")
                 elif op == 3:
