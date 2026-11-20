@@ -13,10 +13,10 @@ class Producto(Base):
         disponible: bool,
         categoria: Categoria
     ) -> None:
-        # Generamos el ID especial desde la categoría ANTES de inicializar la Base
-        id_generado = categoria.generar_id_producto()
-        super().__init__(id_personalizado=id_generado)
+        # Inicializamos Base con un ID provisional para no alterar aún el contador de la categoría
+        super().__init__(id_personalizado=0)
         
+        # Ejecutamos todas las validaciones primero; si alguna falla, se lanza la excepción aquí
         self.nombre = nombre
         self.precio = precio
         self.descripcion = descripcion
@@ -24,6 +24,9 @@ class Producto(Base):
         self.imagen = imagen
         self.disponible = disponible
         self.categoria = categoria
+
+        # Si todas las validaciones pasaron, recién generamos e incrementamos el ID en la categoría
+        self._id = categoria.generar_id_producto()
 
     @property
     def nombre(self) -> str:

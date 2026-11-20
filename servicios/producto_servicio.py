@@ -1,10 +1,29 @@
 from entidades.producto import Producto
 from entidades.categoria import Categoria
-from excepciones.food_store_exceptions import EntidadNoEncontradaError
+from excepciones.food_store_exceptions import (
+    EntidadNoEncontradaError,
+    DuplicadoError,
+    PrecioInvalidoError,
+    DatoInvalidoError
+)
 
 class ProductoServicio:
     def __init__(self) -> None:
         self._productos: list[Producto] = []
+
+    def validar_nombre_disponible(self, nombre: str) -> None:
+        nombre_clean = nombre.strip().lower()
+        for p in self._productos:
+            if not p.eliminado and p.nombre.lower() == nombre_clean:
+                raise DuplicadoError(f"Ya existe un producto activo con el nombre '{p.nombre}'.")
+
+    def validar_precio(self, precio: float) -> None:
+        if precio < 0:
+            raise PrecioInvalidoError("El precio no puede ser negativo.")
+
+    def validar_stock(self, stock: int) -> None:
+        if stock < 0:
+            raise DatoInvalidoError("El stock no puede ser negativo.")
 
     def crear_producto(
         self,
@@ -16,6 +35,7 @@ class ProductoServicio:
         disponible: bool,
         categoria: Categoria
     ) -> Producto:
+        self.validar_nombre_disponible(nombre)
         nuevo = Producto(
             nombre=nombre,
             precio=precio,
