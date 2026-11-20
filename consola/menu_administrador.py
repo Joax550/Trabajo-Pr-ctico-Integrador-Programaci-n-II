@@ -55,9 +55,14 @@ class MenuAdministrador(Menu):
                             print(c)
                 elif op == 2:
                     nom = leer_texto("Nombre de la categoría: ")
-                    desc = input("Descripción: ").strip()
+                    # Si ya existe, lanza DuplicadoError aquí mismo y salta al except (volviendo al submenú)
+                    self._categoria_servicio.validar_nombre_disponible(nom)
+                    
+                    # Si no existe, continúa normalmente con el procedimiento
+                    desc = leer_texto("Descripción: ")
                     cat = self._categoria_servicio.crear_categoria(nom, desc)
                     print(f"Categoría creada con éxito. ID: {cat.id}")
+                    
                 elif op == 3:
                     cat_id = leer_entero("ID de la categoría a editar: ")
                     cat = self._categoria_servicio.buscar_por_id(cat_id)

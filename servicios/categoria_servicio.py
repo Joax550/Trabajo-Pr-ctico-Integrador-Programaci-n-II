@@ -9,11 +9,14 @@ class CategoriaServicio:
     def __init__(self) -> None:
         self._categorias: list[Categoria] = []
 
-    def crear_categoria(self, nombre: str, descripcion: str) -> Categoria:
+    def validar_nombre_disponible(self, nombre: str) -> None:
         nombre_clean = nombre.strip().lower()
         for cat in self._categorias:
             if not cat.eliminado and cat.nombre.lower() == nombre_clean:
-                raise DuplicadoError(f"Ya existe una categoría con el nombre '{nombre}'.")
+                raise DuplicadoError(f"Ya existe una categoría con el nombre '{cat.nombre}'.")
+
+    def crear_categoria(self, nombre: str, descripcion: str) -> Categoria:
+        self.validar_nombre_disponible(nombre)
         nueva = Categoria(nombre=nombre, descripcion=descripcion)
         self._categorias.append(nueva)
         return nueva
