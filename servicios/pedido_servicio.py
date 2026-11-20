@@ -87,3 +87,16 @@ class PedidoServicio:
 
     def listar_por_usuario(self, usuario_id: int) -> list[Pedido]:
         return [p for p in self._pedidos if not p.eliminado and p.usuario.id == usuario_id]
+    
+    def validar_modificable(self, pedido_id: int) -> Pedido:
+        pedido = self.buscar_por_id(pedido_id)
+        if pedido.estado in (Estado.TERMINADO, Estado.CANCELADO):
+            raise OperacionNoPermitidaError(
+                f"No se puede modificar un pedido en estado {pedido.estado.name}."
+            )
+        return pedido
+
+    def cambiar_forma_pago(self, pedido_id: int, nueva_forma_pago: FormaPago) -> Pedido:
+        pedido = self.validar_modificable(pedido_id)
+        pedido.forma_pago = nueva_forma_pago
+        return pedido

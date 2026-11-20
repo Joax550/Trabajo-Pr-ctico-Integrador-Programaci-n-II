@@ -55,14 +55,10 @@ class MenuAdministrador(Menu):
                             print(c)
                 elif op == 2:
                     nom = leer_texto("Nombre de la categoría: ")
-                    # Si ya existe, lanza DuplicadoError aquí mismo y salta al except (volviendo al submenú)
                     self._categoria_servicio.validar_nombre_disponible(nom)
-                    
-                    # Si no existe, continúa normalmente con el procedimiento
                     desc = leer_texto("Descripción: ")
                     cat = self._categoria_servicio.crear_categoria(nom, desc)
                     print(f"Categoría creada con éxito. ID: {cat.id}")
-                    
                 elif op == 3:
                     cat_id = leer_entero("ID de la categoría a editar: ")
                     cat = self._categoria_servicio.buscar_por_id(cat_id)
@@ -77,6 +73,8 @@ class MenuAdministrador(Menu):
                         print("Categoría eliminada con éxito.")
                 elif op == 0:
                     break
+                else:
+                    print(">> Opción no válida.")
             except FoodStoreError as e:
                 print(f">> Error de Negocio: {e}")
 
@@ -101,9 +99,9 @@ class MenuAdministrador(Menu):
                     print("0. Mostrar TODOS los productos")
                     for idx, cat in enumerate(categorias, start=1):
                         print(f"{idx}. {cat.nombre}")
-                    
+
                     op_cat = leer_entero("Seleccione una opción: ")
-                    
+
                     if op_cat == 0:
                         prods = self._producto_servicio.listar_todos()
                     elif 1 <= op_cat <= len(categorias):
@@ -116,7 +114,7 @@ class MenuAdministrador(Menu):
                     if not prods:
                         print("\nNo hay productos registrados para esta selección.")
                     else:
-                        print(f"\n--- LISTA DE PRODUCTOS ---")
+                        print("\n--- LISTA DE PRODUCTOS ---")
                         for p in prods:
                             print(p)
                 elif op == 2:
@@ -147,7 +145,7 @@ class MenuAdministrador(Menu):
                     n_stk = leer_opcional_entero("Nuevo stock", p.stock)
                     n_img = leer_opcional_texto("Nueva imagen", p.imagen)
                     n_disp = confirmar_accion("¿Está disponible?") if input("¿Cambiar disponibilidad? (Enter omite): ").strip() else p.disponible
-                    
+
                     cat_opt = input("ID de nueva categoría (Enter conserva): ").strip()
                     n_cat = self._categoria_servicio.buscar_por_id(int(cat_opt)) if cat_opt else p.categoria
 
@@ -162,6 +160,8 @@ class MenuAdministrador(Menu):
                         print("Producto eliminado.")
                 elif op == 0:
                     break
+                else:
+                    print(">> Opción no válida.")
             except FoodStoreError as e:
                 print(f">> Error de Negocio: {e}")
 
@@ -210,6 +210,8 @@ class MenuAdministrador(Menu):
                         print("Usuario eliminado.")
                 elif op == 0:
                     break
+                else:
+                    print(">> Opción no válida.")
             except FoodStoreError as e:
                 print(f">> Error de Negocio: {e}")
 
@@ -253,15 +255,39 @@ class MenuAdministrador(Menu):
                     print(f"Pedido registrado exitosamente. ID: {nuevo_ped.id} | Total: ${nuevo_ped.total:.2f}")
                 elif op == 3:
                     p_id = leer_entero("ID del pedido a modificar: ")
-                    ped = self._pedido_servicio.buscar_por_id(p_id)
+                    ped = self._pedido_servicio.validar_modificable(p_id)
                     print(f"Pedido seleccionado: {ped}")
-                    if confirmar_accion("¿Desea cambiar el estado?"):
+
+                    print("\n--- ¿QUÉ DESEA MODIFICAR? ---")
+                    print("1. Solo el estado")
+                    print("2. Solo la forma de pago")
+                    print("3. Ambos (estado y forma de pago)")
+                    print("0. Cancelar")
+                    op_mod = leer_entero("Seleccione una opción: ")
+
+                    if op_mod == 1:
                         nuevo_est = leer_enum(Estado, "Nuevo Estado")
                         self._pedido_servicio.cambiar_estado(p_id, nuevo_est)
-                    if confirmar_accion("¿Desea cambiar la forma de pago?"):
+                        print("Estado del pedido actualizado con éxito.")
+                    elif op_mod == 2:
                         nueva_fp = leer_enum(FormaPago, "Nueva Forma de Pago")
-                        ped.forma_pago = nueva_fp
-                    print("Pedido actualizado.")
+                        self._pedido_servicio.cambiar_forma_pago(p_id, nueva_fp)
+                        print("Forma de pago actualizada con éxito.")
+                    elif op_mod == 3:
+                        nuevo_est = leer_enum(Estado, "Nuevo Estado")
+                        self._pedido_servicio.cambiar_estado(p_id, nuevo_est)
+                        
+                        if ped.estado not in (Estado.CANCELADO, Estado.TERMINADO):
+                            nueva_fp = leer_enum(FormaPago, "Nueva Forma de Pago")
+                            self._pedido_servicio.cambiar_forma_pago(p_id, nueva_fp)
+                            print("Estado y forma de pago actualizados con éxito.")
+                        else:
+                            print(f"Estado actualizado a {ped.estado.name}. No se modifica la forma de pago porque el pedido quedó cerrado.")
+                    elif op_mod == 0:
+                        print("Operación cancelada.")
+                    else:
+                        print(">> Opción no válida.")
+                        
                 elif op == 4:
                     p_id = leer_entero("ID del pedido a eliminar: ")
                     if confirmar_accion("¿Confirmar eliminación del pedido?"):
@@ -269,5 +295,7 @@ class MenuAdministrador(Menu):
                         print("Pedido eliminado correctamente.")
                 elif op == 0:
                     break
+                else:
+                    print(">> Opción no válida.")
             except FoodStoreError as e:
                 print(f">> Error de Negocio: {e}")

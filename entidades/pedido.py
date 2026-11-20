@@ -10,16 +10,17 @@ from excepciones.food_store_exceptions import DatoInvalidoError
 
 class Pedido(Base, Calculable):
     def __init__(self, usuario: Usuario, forma_pago: FormaPago) -> None:
-        super().__init__()
+        super().__init__(id_personalizado=0)
         if usuario is None or usuario.eliminado:
             raise DatoInvalidoError("No se puede crear un pedido sin un usuario válido.")
         self._usuario = usuario
-        self._forma_pago = forma_pago
+        self.forma_pago = forma_pago
         self._fecha = date.today()
         self._estado = Estado.PENDIENTE
         self._detalles: list[DetallePedido] = []
         self._total: float = 0.0
-
+        self._id = self._generar_siguiente_id()
+        
     @property
     def usuario(self) -> Usuario:
         return self._usuario
