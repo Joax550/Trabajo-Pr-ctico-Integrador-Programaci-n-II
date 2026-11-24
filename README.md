@@ -68,10 +68,7 @@ Al iniciar el programa, se precargan en memoria usuarios de prueba junto con cat
 
 ## 📂 Enlaces de Entrega
 
-*(Completar antes de realizar la entrega final)*
-
-* 🎥 **Video Demostración:** [Insertar enlace público de YouTube o Google Drive aquí]
-* 📄 **Informe Técnico (PDF):** [Insertar enlace al informe o indicar que se encuentra en la raíz del repositorio]
-
+* 🎥 **Video Demostración:** https://www.youtube.com/watch?v=olnr6EaHmUE
+* 📄 **Informe Técnico (PDF):** [Ver informe del proyecto](./Informe_TPI_Programacion2_FoodStore.pdf)
 ---
 *Desarrollado para la Tecnicatura Universitaria en Programación - UTN.*
